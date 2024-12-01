@@ -1,6 +1,7 @@
 export default class NotificationMessage {
   static lastNotification;
   element;
+  timer;
   constructor(message = "", { duration = 0, type = "success" } = {}) {
     this.message = message;
     this.duration = duration;
@@ -37,7 +38,7 @@ export default class NotificationMessage {
     NotificationMessage.lastNotification = this;
 
     targetElement.appendChild(this.element);
-    setTimeout(() => this.remove(), this.duration);
+    this.timer = setTimeout(() => this.remove(), this.duration);
   }
 
   getTimerValue() {
@@ -50,5 +51,6 @@ export default class NotificationMessage {
 
   destroy() {
     this.remove();
+    clearTimeout(this.timer);
   }
 }
