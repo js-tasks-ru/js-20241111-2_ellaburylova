@@ -57,12 +57,12 @@ export default class SortableTable extends SortableTableV1 {
     this.sort(field, newOrder);
   };
   createListeners() {
-    this.subElements.header.addEventListener("pointerdown", this.onHeaderCellClick);
+    this.subElements.header.addEventListener("click", this.onHeaderCellClick);
   }
 
   destroyListeners() {
     this.subElements.header.removeEventListener(
-      "pointerdown",
+      "click",
       this.onHeaderCellClick
     );
   }
