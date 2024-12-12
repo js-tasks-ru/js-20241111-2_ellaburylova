@@ -1,7 +1,6 @@
 import SortableTableV1 from "../../05-dom-document-loading/2-sortable-table-v1/index.js";
 
 export default class SortableTable extends SortableTableV1 {
-
   constructor(headersConfig, { data = [], sorted = {} } = {}) {
     super(headersConfig, data);
     this.isSortLocally = true;
@@ -21,13 +20,13 @@ export default class SortableTable extends SortableTableV1 {
     tempElement.innerHTML = this.createArrowTemplate();
     return tempElement.firstElementChild;
   }
-  sort (sortField, sortOrder) {
-    if (this.isSortLocally) { 
+  sort(sortField, sortOrder) {
+    if (this.isSortLocally) {
       this.sortOnClient(sortField, sortOrder);
     } else {
       this.sortOnServer();
     }
-}
+  }
   addDefaultSorting() {
     const { id, order } = this.sorted;
     const defaultSortingHederCell = this.subElements.header.querySelector(
@@ -36,34 +35,34 @@ export default class SortableTable extends SortableTableV1 {
 
     if (defaultSortingHederCell) {
       defaultSortingHederCell.appendChild(this.arrowElement);
-      defaultSortingHederCell.dataset.order = order;
+      const sortOrder = order === "asc" ? "desc" : "asc";
+      defaultSortingHederCell.dataset.order = sortOrder;
       this.sort(id, order);
     }
   }
-  
-  onHeaderCellClick = (e) => {
+
+  onHeaderCellPointerdown = (e) => {
     const headerCell = e.target.closest(".sortable-table__cell");
     if (!headerCell || !headerCell.dataset.sortable) return;
     headerCell.appendChild(this.arrowElement);
-    const { id } = headerCell.dataset;
     const currentOrder = headerCell.dataset.order;
-
     const newOrder = currentOrder === "asc" ? "desc" : "asc";
-
-    this.sorted = { id, order: newOrder };
     const field = headerCell.dataset.id;
     headerCell.dataset.order = newOrder;
 
-    this.sort(field, newOrder);
+    this.sort(field, currentOrder);
   };
   createListeners() {
-    this.subElements.header.addEventListener("click", this.onHeaderCellClick);
+    this.subElements.header.addEventListener(
+      "pointerdown",
+      this.onHeaderCellPointerdown
+    );
   }
 
   destroyListeners() {
     this.subElements.header.removeEventListener(
-      "click",
-      this.onHeaderCellClick
+      "pointerdown",
+      this.onHeaderCellPointerdown
     );
   }
   destroy() {
