@@ -83,8 +83,7 @@ export default class SortableTable {
     this.updateTableBody();
   }
   updateTableBody() {
-    const body = document.querySelector('[data-element="body"]');
-    body.innerHTML = this.createBodyTemplate();
+    this.subElements.body.innerHTML = this.createBodyTemplate();
   }
   remove() {
     this.element.remove();
