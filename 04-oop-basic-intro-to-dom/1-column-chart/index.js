@@ -1,7 +1,7 @@
 export default class ColumnChart {
   element;
   chartHeight = 50;
-
+  subElements = {};
   constructor({
     data = [],
     label = "",
@@ -14,12 +14,21 @@ export default class ColumnChart {
     this.link = link;
     this.value = value;
     this.formatHeading = formatHeading;
+
     this.element = this.createElement(this.createTemplate());
+    this.selectSubElements();
   }
   createElement(template) {
     const element = document.createElement("div");
     element.innerHTML = template;
     return element.firstElementChild;
+  }
+  selectSubElements() {
+    this.element
+      .querySelectorAll("[data-element]")
+      .forEach(
+        (element) => (this.subElements[element.dataset.element] = element)
+      );
   }
   createLinkTemplate() {
     if (this.link) {
@@ -28,10 +37,11 @@ export default class ColumnChart {
     return "";
   }
   getColumnProps() {
-    const maxValue = Math.max(...this.data);
+    const dataArr = Object.values(this.data);
+    const maxValue = Math.max(...dataArr);
     const scale = 50 / maxValue;
 
-    return this.data.map((item) => {
+    return dataArr.map((item) => {
       return {
         percent: ((item / maxValue) * 100).toFixed(0) + "%",
         value: String(Math.floor(item * scale)),
@@ -66,11 +76,18 @@ export default class ColumnChart {
     </div>
   </div>`;
   }
+  updateColumnChartHeader() {
+    this.subElements.header.textContent = this.formatHeading(this.value);
+  }
+  updateColumnChartBody() {
+    this.subElements.body.innerHTML = this.createChartBodyTemplate();
+  }
   update(newData) {
     this.data = newData;
-    this.element.querySelector('[data-element="body"]').innerHTML =
-      this.createChartBodyTemplate();
+    this.updateColumnChartBody();
+    this.updateColumnChartHeader();
   }
+
   remove() {
     this.element.remove();
   }
